@@ -107,6 +107,24 @@ pipeline {
                 }
             }
         }
+
+  stage('Edit Jira Issue') {
+            steps {
+                script {
+                    def jiraIssueKey = "PROJECT-123" // Reemplaza con tu clave de issue en Jira
+
+                    def fieldsToUpdate = [
+                        "summary": "Nuevo título del issue",  // Editar el resumen del issue
+                        "description": "Actualizada descripción del issue.", // Editar descripción
+                        "priority": [ "name": "High" ] // Cambiar la prioridad
+                    ]
+
+                    jiraEditIssue idOrKey: jiraIssueKey, issue: [ fields: fieldsToUpdate ]
+
+                    echo "El issue ${jiraIssueKey} fue actualizado con éxito."
+                }
+            }
+        }
         
     }
     post {
