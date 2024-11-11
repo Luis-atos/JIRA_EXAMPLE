@@ -1,0 +1,36 @@
+pipeline {
+    agent any
+     environment {
+        JIRA_SITE = "JENKINS_JIRA" 
+    }
+    stages {
+        stage('Build') {
+            steps {
+                echo 'Building...'
+            }
+        }
+        stage('Test') {
+            steps {
+                echo 'Testing...'
+            }
+        }
+        stage('Actuality Jira Issue') {
+            steps {
+             script {
+                    def jiraIssueKey = "RFC-22" 
+
+                    def fieldsToUpdate = [
+                        "summary": "Nuevo título del issue",  
+                        "description": "Actualizada descripción del issue.", 
+                        "priority": [ "name": "High" ] // Cambiar la prioridad
+                    ]
+
+                    jiraEditIssue idOrKey: jiraIssueKey, issue: [ fields: fieldsToUpdate ]
+
+                    echo "El issue ${jiraIssueKey} fue actualizado con éxito."
+                }
+            }
+        }
+        
+    }
+}
