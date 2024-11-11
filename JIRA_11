@@ -1,0 +1,117 @@
+pipeline {
+    agent any
+    environment {
+        JIRA_SITE = "JENKINS_JIRA" 
+        JIRA_PROJECT_KEY = "RFC"  
+        JIRA_ISSUE_TYPE = "Mejora"
+    }
+    stages {
+        stage('Create Jira Issue') {
+            steps {
+                script {
+                    def issueFields = [
+                        fields: [
+                            summary: "Prueba",
+                            description: "Jenkins actualiza JIRA",
+                            project: [
+                                key: env.JIRA_PROJECT_KEY
+                            ],
+                            issuetype: [
+                                name: env.JIRA_ISSUE_TYPE
+                            ]
+                        ]
+                    ]
+
+                    def newIssue = jiraNewIssue issue: issueFields
+                    echo "Created new Jira Issue: ${newIssue.data.key}"
+                }
+            }
+        }
+        
+         /*
+          stage('Move Issue via API') {
+            steps {
+                script {
+                    def issueKey = 'RFC-22'
+                    def transitionId = '31'  // Transición a "En Progreso"
+
+                    def response = httpRequest(
+                        httpMode: 'POST',
+                        url: "https://jiradivindes.mdef.es/rest/api/2/issue/${issueKey}/transitions",
+                        contentType: 'APPLICATION_JSON',
+                        requestBody: """
+                        {
+                            "transition": { "id": "${transitionId}" }
+                        }
+                        """,
+                        authentication: 'JIRA_TOKEN'  
+                    )
+                    
+                    echo "Response: ${response.content}"
+                }
+            }
+          }
+        
+        stage('Crear Issue en Jira') {
+            steps {
+                script {
+                    def FieldsIssue = [
+                        fields: [
+                            summary     : "Resumen del problema",
+                            description : "Detalles a consierar",
+                            project: [
+                                key: "RFC"
+                            ],
+                            issuetype: [
+                                name: "Mejora"
+                            ]
+                        ]
+                    ]
+
+                    def issue = jiraNewIssue(issue: FieldsIssue)
+                    echo "Nueva issue creada: ${issue.key}"
+                }
+            }
+        }
+        
+        stage('Actualizar Issue en Jira') {
+            steps {
+                script {
+                    def issueKey = 'RFC-888' // Clave de la tarea de Jira a actualizar
+
+                    jiraEditIssue(
+                        idOrKey: issueKey,
+                        issue: [
+                            fields: [
+                                description: 'Actualización de la descripción',
+                                priority   : [name: 'High']
+                            ]
+                        ]
+                    )
+                    echo "Issue ${issueKey} actualizada exitosamente."
+                }
+            }
+        }
+        */
+        
+        stage('Cerrar Issue en Jira') {
+            steps {
+                script {
+                    def issueKey = "RFC-22" 
+
+                    jiraTransitionIssue(
+                        idOrKey: issueKey,
+                        input: [transition: [id: "21"]]
+                    )
+                    echo "Issue ${issueKey} cerrada exitosamente."
+                }
+            }
+        }
+        
+    }
+    post {
+        always {
+            echo "Pipeline finalizado"
+        }
+    }
+}
