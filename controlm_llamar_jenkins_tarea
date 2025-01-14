@@ -1,0 +1,2 @@
+curl -X POST "http://srvcceacml120d:8080/job/controlm/build" \
+--user "user:token" \
